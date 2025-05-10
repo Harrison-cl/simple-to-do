@@ -101,7 +101,7 @@ function renderTodos() {
           ${!todo.done && !todo.unneeded ? 'checked' : ''}
           data-index="${index}"
         >
-        <label>Active</label>
+        <label>to-do</label>
       </div>
     `;
     
