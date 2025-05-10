@@ -14,6 +14,33 @@ function saveCategories() {
     localStorage.setItem('categories', JSON.stringify(categories));
 }
 
+function renderTodos() {
+    todoList.innerHTML = `
+      <li class="todo-header">
+        <span>Category</span>
+        <span>To-Do</span>
+        <span>Status</span>
+        <span>Select</span>
+      </li>
+    `;
+  
+    for (const todo of todos) {
+      const todoItem = document.createElement('li');
+      todoItem.className = 'todo-item';
+      todoItem.innerHTML = `
+        <span class="todo-category">${todo.category}</span>
+        <span class="todo-text">${todo.text}</span>
+        <div class="status">
+          <input type="checkbox" class="todo-done" ${todo.done ? 'checked' : ''}>
+          <label>Done</label>
+          <input type="checkbox" class="todo-unneeded" ${todo.unneeded ? 'checked' : ''}>
+          <label>Unneeded</label>
+        </div>
+        <input type="checkbox" class="todo-select">
+      `;
+      todoList.appendChild(todoItem);
+    }; 
+  }
 
 function addCategory() {
     const newCategory = categoryToAdd.value.trim();
@@ -37,15 +64,38 @@ function addTodo() {
     const todoText = todoInput.value.trim();
     const category = document.getElementById('category').value;
     if (todoText && category) {
-        const todo = { text: todoText, category: category };
-        todos.push(todo);
-        renderTodos();
-        todoInput.value = '';
-        saveTodos();
-        alert('To-do added successfully');
-    } else {
-        alert('Please enter a to-do and select a category');
+      const todo = { 
+        text: todoText, 
+        category: category,
+        done: false,
+        unneeded: false,
+        selected: false
+      };
+      todos.push(todo);
+      renderTodos();
+      todoInput.value = '';
+      saveTodos();
     }
-}
+  }
 
 
+  document.addEventListener('DOMContentLoaded', () => {
+    // Toggle done/unneeded (mutually exclusive)
+    todoList.addEventListener('change', (e) => {
+      if (e.target.classList.contains('todo-done')) {
+        const item = e.target.closest('.todo-item');
+        item.querySelector('.todo-unneeded').checked = false;
+      }
+      if (e.target.classList.contains('todo-unneeded')) {
+        const item = e.target.closest('.todo-item');
+        item.querySelector('.todo-done').checked = false;
+      }
+    });
+  
+    // Remove selected items
+    document.getElementById('remove-selected').addEventListener('click', () => {
+      todos = todos.filter(todo => !todo.selected);
+      renderTodos();
+      saveTodos();
+    });
+  });
