@@ -171,6 +171,44 @@ function addCategory() {
   categoryToAdd.value = '';
 }
 
+// Remove Category
+function removeCategory() {
+  const categoryToRemove = categoryDropdown.value;
+  
+  if (!categoryToRemove) {
+    alert('Please select a category to remove');
+    return;
+  }
+  
+  // Don't allow removing if there's only one category left
+  if (categories.length <= 1) {
+    alert('Cannot remove the last category');
+    return;
+  }
+  
+  // Ask for confirmation
+  if (!confirm(`Are you sure you want to remove the "${categoryToRemove}" category? This will also remove all associated todo items.`)) {
+    return;
+  }
+  
+  // Remove the category from the categories array
+  const categoryIndex = categories.indexOf(categoryToRemove);
+  if (categoryIndex !== -1) {
+    categories.splice(categoryIndex, 1);
+  }
+  
+  // Remove all todos with this category
+  todos = todos.filter(todo => todo.category !== categoryToRemove);
+  
+  // Save changes
+  saveCategories();
+  saveTodos();
+  
+  // Update UI
+  populateCategoryDropdown();
+  renderTodos();
+}
+
 // Add Todo
 function addTodo() {
   const todoText = todoInput.value.trim();
@@ -197,5 +235,6 @@ function addTodo() {
 // Attach Event Listeners
 document.getElementById('add-category').addEventListener('click', addCategory);
 document.getElementById('add-todo').addEventListener('click', addTodo);
+document.getElementById('remove-category').addEventListener('click', removeCategory);
 todoList.addEventListener('change', handleTodoStatusChange);
 document.getElementById('remove-selected').addEventListener('click', removeSelectedTodos);

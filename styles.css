@@ -148,6 +148,14 @@
     justify-content: flex-end;
   }
   
+  .danger-btn {
+    background-color: var(--danger-color);
+  }
+  
+  .danger-btn:hover {
+    background-color: #c0392b;
+  }
+  
   #remove-selected {
     background-color: var(--danger-color);
   }
