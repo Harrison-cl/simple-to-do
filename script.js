@@ -6,6 +6,14 @@ let todos = [];
 let categories = ['General', 'Work', 'Personal', 'Urgent'];
 
 
+function saveTodos() {
+    localStorage.setItem('todos', JSON.stringify(todos));
+  }
+
+function saveCategories() {
+    localStorage.setItem('categories', JSON.stringify(categories));
+}
+
 
 function addCategory() {
     const newCategory = categoryToAdd.value.trim();
@@ -16,6 +24,8 @@ function addCategory() {
         option.textContent = newCategory;
         document.getElementById('category').appendChild(option);
         categoryToAdd.value = '';
+        saveCategories();
+        alert('Category added successfully');
     } else {
         alert('Invalid or duplicate category');
     }
@@ -31,7 +41,11 @@ function addTodo() {
         todos.push(todo);
         renderTodos();
         todoInput.value = '';
+        saveTodos();
+        alert('To-do added successfully');
     } else {
         alert('Please enter a to-do and select a category');
     }
 }
+
+
