@@ -47,27 +47,61 @@ function populateCategoryDropdown() {
 
 // Render Todos
 function renderTodos() {
-  // Keep only the header row
-  const header = todoList.querySelector('.todo-header') || 
-    todoList.appendChild(document.createElement('li')).classList.add('todo-header');
+  // Check if header exists, otherwise create it
+  if (!todoList.querySelector('.todo-header')) {
+    const header = document.createElement('li');
+    header.className = 'todo-header';
+    header.innerHTML = `
+      <span>Category</span>
+      <span>To-Do</span>
+      <span>Status</span>
+      <span>Select</span>
+    `;
+    todoList.appendChild(header);
+  }
 
   // Clear existing items (except header)
-  while (todoList.children.length > 1) {
-    todoList.removeChild(todoList.lastChild);
+  const items = todoList.querySelectorAll('li:not(.todo-header)');
+  for (const item of items) {
+    item.remove();
   }
 
   // Add todos
-  for (const todo of todos) {
+  for (const [index, todo] of todos.entries()) {
     const todoItem = document.createElement('li');
     todoItem.className = 'todo-item';
     todoItem.innerHTML = `
       <span class="todo-category">${todo.category}</span>
       <span class="todo-text">${todo.text}</span>
       <div class="status">
-        <input type="checkbox" class="todo-done" ${todo.done ? 'checked' : ''}>
+        <!-- Radio buttons (mutually exclusive by default) -->
+        <input 
+          type="radio" 
+          name="status-${index}" 
+          value="done"
+          class="todo-status" 
+          ${todo.done ? 'checked' : ''}
+          data-index="${index}"
+        >
         <label>Done</label>
-        <input type="checkbox" class="todo-unneeded" ${todo.unneeded ? 'checked' : ''}>
+        <input 
+          type="radio" 
+          name="status-${index}" 
+          value="unneeded"
+          class="todo-status" 
+          ${todo.unneeded ? 'checked' : ''}
+          data-index="${index}"
+        >
         <label>Unneeded</label>
+        <input 
+          type="radio" 
+          name="status-${index}" 
+          value="active"
+          class="todo-status" 
+          ${!todo.done && !todo.unneeded ? 'checked' : ''}
+          data-index="${index}"
+        >
+        <label>Active</label>
       </div>
       <input type="checkbox" class="todo-select" ${todo.selected ? 'checked' : ''}>
     `;
@@ -76,18 +110,28 @@ function renderTodos() {
 }
 
 // --- Event Handlers ---
-function handleTodoCheckboxChange(e) {
-  const item = e.target.closest('.todo-item');
-  const index = [...todoList.children].indexOf(item) - 1; // Skip header
-
-  if (e.target.classList.contains('todo-done')) {
-    todos[index].done = e.target.checked;
-    if (e.target.checked) todos[index].unneeded = false;
-  } 
-  else if (e.target.classList.contains('todo-unneeded')) {
-    todos[index].unneeded = e.target.checked;
-    if (e.target.checked) todos[index].done = false;
+function handleTodoStatusChange(e) {
+  if (!e.target.classList.contains('todo-status') && !e.target.classList.contains('todo-select')) {
+    return; // Only process radio buttons and selection checkboxes
   }
+  
+  const index = Number.parseInt(e.target.dataset.index);
+  
+  if (e.target.classList.contains('todo-status')) {
+    const status = e.target.value;
+    
+    // Reset all status flags
+    todos[index].done = false;
+    todos[index].unneeded = false;
+    
+    // Set the appropriate flag based on selection
+    if (status === 'done') {
+      todos[index].done = true;
+    } else if (status === 'unneeded') {
+      todos[index].unneeded = true;
+    }
+    // 'active' means both done and unneeded are false
+  } 
   else if (e.target.classList.contains('todo-select')) {
     todos[index].selected = e.target.checked;
   }
@@ -141,5 +185,5 @@ function addTodo() {
 // Attach Event Listeners
 document.getElementById('add-category').addEventListener('click', addCategory);
 document.getElementById('add-todo').addEventListener('click', addTodo);
-todoList.addEventListener('change', handleTodoCheckboxChange);
+todoList.addEventListener('change', handleTodoStatusChange);
 document.getElementById('remove-selected').addEventListener('click', removeSelectedTodos);
