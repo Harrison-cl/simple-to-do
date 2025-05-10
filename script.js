@@ -1,21 +1,18 @@
+// DOM Elements
 const categoryToAdd = document.getElementById('new-category');
 const todoInput = document.getElementById('todo-text');
 const todoList = document.getElementById('todo-list');
-const categoryDropdown = document.getElementById('category'); // Fixed: consistent name
-const categoryFilter = document.getElementById('category-filter');
+const categoryDropdown = document.getElementById('category');
 
+// Data
 let todos = [];
 let categories = ['General', 'Work', 'Personal', 'Urgent'];
 
-// Initialize on page load
+// Initialize
 document.addEventListener('DOMContentLoaded', () => {
   loadFromLocalStorage();
-  populateCategoryDropdowns();
+  populateCategoryDropdown();
   renderTodos();
-
-  // Event listeners
-  todoList.addEventListener('change', handleTodoCheckboxChange);
-  document.getElementById('remove-selected').addEventListener('click', removeSelectedTodos);
 });
 
 // --- Core Functions ---
@@ -34,32 +31,33 @@ function saveCategories() {
   localStorage.setItem('categories', JSON.stringify(categories));
 }
 
-function populateCategoryDropdowns() {
-  const dropdowns = [categoryDropdown, categoryFilter];
-  
-  for (const dropdown of dropdowns) {
-    // Clear except first option
-    while (dropdown.options.length > 1) dropdown.remove(1);
-    
-    // Add categories
-    for (const category of categories) {
-      dropdown.add(new Option(category, category));
-    }
+// Populate ONLY the category dropdown (no filter)
+function populateCategoryDropdown() {
+  // Clear existing options (except the first)
+  while (categoryDropdown.options.length > 1) {
+    categoryDropdown.remove(1);
+  }
+
+  // Add categories
+  for (const category of categories) {
+    const option = new Option(category, category);
+    categoryDropdown.add(option);
   }
 }
 
-// --- Todo List Rendering ---
+// Render Todos
 function renderTodos() {
-  todoList.innerHTML = `
-    <li class="todo-header">
-      <span>Category</span>
-      <span>To-Do</span>
-      <span>Status</span>
-      <span>Select</span>
-    </li>
-  `;
+  // Keep only the header row
+  const header = todoList.querySelector('.todo-header') || 
+    todoList.appendChild(document.createElement('li')).classList.add('todo-header');
 
-  for (const [index, todo] of todos.entries()) {
+  // Clear existing items (except header)
+  while (todoList.children.length > 1) {
+    todoList.removeChild(todoList.lastChild);
+  }
+
+  // Add todos
+  for (const todo of todos) {
     const todoItem = document.createElement('li');
     todoItem.className = 'todo-item';
     todoItem.innerHTML = `
@@ -81,7 +79,7 @@ function renderTodos() {
 function handleTodoCheckboxChange(e) {
   const item = e.target.closest('.todo-item');
   const index = [...todoList.children].indexOf(item) - 1; // Skip header
-  
+
   if (e.target.classList.contains('todo-done')) {
     todos[index].done = e.target.checked;
     if (e.target.checked) todos[index].unneeded = false;
@@ -93,7 +91,7 @@ function handleTodoCheckboxChange(e) {
   else if (e.target.classList.contains('todo-select')) {
     todos[index].selected = e.target.checked;
   }
-  
+
   saveTodos();
 }
 
@@ -103,28 +101,30 @@ function removeSelectedTodos() {
   renderTodos();
 }
 
+// Add Category
 function addCategory() {
   const newCategory = categoryToAdd.value.trim();
   if (!newCategory || categories.includes(newCategory)) {
     alert('Invalid or duplicate category');
     return;
   }
-  
+
   categories.push(newCategory);
   saveCategories();
-  populateCategoryDropdowns();
+  populateCategoryDropdown();
   categoryToAdd.value = '';
 }
 
+// Add Todo
 function addTodo() {
   const todoText = todoInput.value.trim();
   const category = categoryDropdown.value;
-  
+
   if (!todoText || !category) {
     alert('Please enter a to-do and select a category');
     return;
   }
-  
+
   todos.push({
     text: todoText,
     category,
@@ -132,8 +132,14 @@ function addTodo() {
     unneeded: false,
     selected: false
   });
-  
+
   todoInput.value = '';
   saveTodos();
   renderTodos();
 }
+
+// Attach Event Listeners
+document.getElementById('add-category').addEventListener('click', addCategory);
+document.getElementById('add-todo').addEventListener('click', addTodo);
+todoList.addEventListener('change', handleTodoCheckboxChange);
+document.getElementById('remove-selected').addEventListener('click', removeSelectedTodos);

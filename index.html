@@ -13,35 +13,37 @@
     </header>
     <main>
         <div class="app-container">
-            <!-- category -->
+            <!-- Category Section -->
             <div class="category-section">
               <input type="text" id="new-category" placeholder="New category">
               <button id="add-category">Add Category</button>
-              <select id="category-filter">
-                <option value="all">All Categories</option>
-              </select>
             </div>
-        <div class="todo-input">
-            <input type="text" id="todo-text" placeholder="What needs to be done?">
-            <select id="todo-category">
-              <option value="">Select category</option>
-            </select>
-            <button id="add-todo">Add Item</button>
+          
+            <!-- To-Do Input -->
+            <div class="todo-input">
+              <input type="text" id="todo-text" placeholder="What needs to be done?">
+              <select id="category">
+                <option value="">Select category</option>
+              </select>
+              <button id="add-todo">Add Item</button>
+            </div>
+          
+            <!-- To-Do List -->
+            <ul id="todo-list">
+              <li class="todo-header">
+                <span>Category</span>
+                <span>To-Do</span>
+                <span>Status</span>
+                <span>Select</span>
+              </li>
+              <!-- Items added by JavaScript -->
+            </ul>
+          
+            <!-- Bulk Actions -->
+            <div class="bulk-actions">
+              <button id="remove-selected">Remove Selected</button>
+            </div>
           </div>
-          <ul id="todo-list">
-            <!-- Header Row -->
-            <li class="todo-header">
-              <span>Category</span>
-              <span>To-Do</span>
-              <span>Status</span>
-              <span>Select</span>
-            </li>
-            <!-- Items will be added here by JavaScript -->
-          </ul>
-          <div class="bulk-actions">
-            <button id="remove-selected">Remove Selected</button>
-          </div>
-        </div>
     </main>
     <footer>
         <p>Harrison, Simple to-do 2025</p>
