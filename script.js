@@ -70,9 +70,9 @@ function renderTodos() {
   for (const [index, todo] of todos.entries()) {
     const todoItem = document.createElement('li');
     todoItem.className = 'todo-item';
-    todoItem.innerHTML = `
-      <span class="todo-category">${todo.category}</span>
-      <span class="todo-text">${todo.text}</span>
+    
+    // Create status radio buttons
+    const statusHtml = `
       <div class="status">
         <!-- Radio buttons (mutually exclusive by default) -->
         <input 
@@ -103,6 +103,12 @@ function renderTodos() {
         >
         <label>Active</label>
       </div>
+    `;
+    
+    todoItem.innerHTML = `
+      <span class="todo-category">${todo.category}</span>
+      <span class="todo-text">${todo.text}</span>
+      ${statusHtml}
       <input type="checkbox" class="todo-select" ${todo.selected ? 'checked' : ''}>
     `;
     todoList.appendChild(todoItem);
@@ -111,13 +117,11 @@ function renderTodos() {
 
 // --- Event Handlers ---
 function handleTodoStatusChange(e) {
-  if (!e.target.classList.contains('todo-status') && !e.target.classList.contains('todo-select')) {
-    return; // Only process radio buttons and selection checkboxes
-  }
-  
-  const index = Number.parseInt(e.target.dataset.index);
-  
+  // Handle status radio buttons
   if (e.target.classList.contains('todo-status')) {
+    const index = Number.parseInt(e.target.dataset.index);
+    if (Number.isNaN(index) || index < 0 || index >= todos.length) return;
+    
     const status = e.target.value;
     
     // Reset all status flags
@@ -131,12 +135,20 @@ function handleTodoStatusChange(e) {
       todos[index].unneeded = true;
     }
     // 'active' means both done and unneeded are false
+    
+    saveTodos();
   } 
+  // Handle selection checkboxes
   else if (e.target.classList.contains('todo-select')) {
+    const item = e.target.closest('.todo-item');
+    if (!item) return;
+    
+    const index = Array.from(todoList.children).indexOf(item) - 1; // -1 to account for header
+    if (index < 0 || index >= todos.length) return;
+    
     todos[index].selected = e.target.checked;
+    saveTodos();
   }
-
-  saveTodos();
 }
 
 function removeSelectedTodos() {
