@@ -12,11 +12,31 @@
         <h1>Simple to-do</h1>
     </header>
     <main>
-        <section id="content">
-            <p>This is a simple web page.</p>
-        </section>
+        <div class="app-container">
+            <!-- category -->
+            <div class="category-section">
+              <input type="text" id="new-category" placeholder="New category">
+              <button id="add-category">Add Category</button>
+              <select id="category-filter">
+                <option value="all">All Categories</option>
+              </select>
+            </div>
+        <div class="todo-input">
+            <input type="text" id="todo-text" placeholder="What needs to be done?">
+            <select id="todo-category">
+              <option value="">Select category</option>
+            </select>
+            <button id="add-todo">Add Item</button>
+          </div>
+          <ul id="todo-list">
+            <!-- javascript will add items here-->>
+          </ul>
+          <div class="bulk-actions">
+            <button id="remove-selected">Remove Selected</button>
+          </div>
+        </div>
     </main>
     <footer>
-        <p>&copy; 2023 My Web Page</p>
+        <p>Simple to-do 2025</p>
     </footer>
 </html>
