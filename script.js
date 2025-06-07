@@ -1,3 +1,15 @@
+
+/*  
+Key Features:  
+1. Category system (add/remove)  
+2. Status tracking (done/unneeded/active)  
+3. Bulk delete  
+4. Simple local storage
+5. minimal UI with no external libraries
+6. Responsive design for mobile and desktop
+*/  
+
+
 // DOM Elements
 const categoryToAdd = document.getElementById('new-category');
 const todoInput = document.getElementById('todo-text');
@@ -238,3 +250,7 @@ document.getElementById('add-todo').addEventListener('click', addTodo);
 document.getElementById('remove-category').addEventListener('click', removeCategory);
 todoList.addEventListener('change', handleTodoStatusChange);
 document.getElementById('remove-selected').addEventListener('click', removeSelectedTodos);
+
+todoInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') addTodo();
+});
